@@ -1,0 +1,39 @@
+Plugin for ACE CPC Emulator which provides GX4000/Plus analog
+joystick support, based on the Tennis Cup 2 cartridge's analog
+joystick routine:
+
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)
+
+The ADC returns values 00h-3Fh (0-63). Center position is 1Fh (31).
+Directions are determined via the Tennis Cup 2 algorithm:
+  - Deflection >= +14h from center = right or down
+  - Deflection <= -15h from center = left or up
+  - Dead zone of +/-13h around center
+
+Installation:
+-------------
+Copy the content of the archive to your ACE drawer.
+Use the ACE-Analog icon to launch ACE with Analog support enabled.
+
+Settings:
+---------
+The plugin settings panel lets you select the joystick port:
+  - Joystick Port 0: Analog on joystick port A
+  - Joystick Port 1: Analog on joystick port B (default)
+
+Usage:
+------
+The GX4000/Plus ADC provides two channels for X/Y position.
+The included Z80 driver (driver/analog_driver.asm) reads the ADC
+and converts analog values to digital directions, with fire button
+read from digital joystick 1.
+
+Files:
+------
+  Plugins/analog.acepansion   - The ACEpansion plugin binary
+  Help/analog.acepansion.guide - Documentation (English)
+  driver/analog_driver.asm     - Z80 assembly driver source
+  driver/analog_demo.bas       - BASIC demonstration program
+
+More information:
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)

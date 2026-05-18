@@ -1,0 +1,92 @@
+$VER: analog.acepansion 1.0 (18.05.2026) "Analog Joystick ACEpansion"
+
+Analog Joystick ACEpansion
+===========================
+
+Plugin for ACE CPC Emulator which provides analog joystick support
+for the Amstrad CPC/GX4000, based on the Tennis Cup 2 cartridge's
+analog joystick routine.
+
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)
+
+Description
+-----------
+The GX4000/Plus range includes ADC (Analog-to-Digital Converter)
+hardware that allows reading analog joystick position. Tennis Cup 2
+is the only known game to support this feature, converting the analog
+signals to digital directions via software.
+
+This ACEpansion exposes the ADC hardware to emulated CPC/GX4000
+systems, allowing analog joystick input in your own programs.
+
+How It Works
+------------
+The ADC provides two channels:
+  - Channel 0: X-axis (joystick left/right)
+  - Channel 1: Y-axis (joystick up/down)
+
+Raw ADC values range from 00h to 3Fh (0-63), with center at 1Fh (31).
+The driver applies a dead zone of +/-13h around center, using the
+same algorithm as Tennis Cup 2:
+
+  +14h to +20h  -> direction (right or down)
+  -14h to -1Fh  -> opposite  (left or up)
+  -13h to +13h  -> dead zone (no direction)
+
+The fire button is read from digital joystick 1 (keyboard row 9),
+matching Tennis Cup 2's approach of analog directions + digital fire.
+
+Installation
+------------
+Copy the contents of the Analog archive to your ACE directory.
+Launch ACE using the ACE-Analog icon.
+
+Settings
+--------
+Open the Analog Settings panel from the Plugins menu to configure:
+
+  Joystick Port:
+    Select which joystick port the analog stick is on.
+    Default is port 1.
+
+Z80 Driver
+----------
+The driver/analog_driver.asm file contains a complete Z80 assembly
+driver for reading the analog joystick. It assembles with RASM:
+
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)
+
+Key routines:
+
+  CALL &A000 - analog_init:
+    Initialize the driver and AY PSG for joystick reading.
+
+  CALL &A003 - analog_read:
+    Read ADC channels 0 and 1, convert to digital directions,
+    and read fire button state. Updates the variable area.
+
+Variables (PEEK from BASIC):
+
+  PEEK(&A006) - joy_state:
+    Combined joystick state bits:
+      bit 0 = up, bit 1 = down
+      bit 2 = left, bit 3 = right
+      bit 4 = fire
+
+  PEEK(&A007) - joy_x_raw:
+    Raw ADC X-axis value (00h-3Fh)
+
+  PEEK(&A008) - joy_y_raw:
+    Raw ADC Y-axis value (00h-3Fh)
+
+  PEEK(&A009) - joy_fire:
+    Fire button state (0=released, non-0=pressed)
+
+Author
+------
+Based on Tennis Cup 2 by Loriciels
+ACEpansion plugin by Philippe Rimauro (offset) <offset@cpcscene.net>
+
+See Also
+--------
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)

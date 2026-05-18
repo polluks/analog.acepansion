@@ -15,21 +15,21 @@ struct Library *IntuitionBase;
 struct Library *UtilityBase;
 struct Library *MUIMasterBase;
 
-struct MUI_CustomClass *MCC_LP1Class = NULL;
+struct MUI_CustomClass *MCC_AnalogClass = NULL;
 
-#define LP1Object NewObject(MCC_LP1Class->mcc_Class, NULL)
+#define AnalogObject NewObject(MCC_AnalogClass->mcc_Class, NULL)
 
-#define MUIA_LP1_Plugin       (TAG_USER | 0x0000)
-#define MUIA_LP1_JoystickPort (TAG_USER | 0x0001)
+#define MUIA_Analog_Plugin       (TAG_USER | 0x0000)
+#define MUIA_Analog_JoystickPort (TAG_USER | 0x0001)
 
-#define MUIM_LP1_Notify       (TAG_USER | 0x0100)
-#define MUIV_LP1_Notify_ToGUI     0
-#define MUIV_LP1_Notify_ToPlugin  1
+#define MUIM_Analog_Notify       (TAG_USER | 0x0100)
+#define MUIV_Analog_Notify_ToGUI     0
+#define MUIV_Analog_Notify_ToPlugin  1
 
-#define MUIV_LP1_Notify_UpdateStatus 10
-#define MUIV_LP1_Notify_PortChange  11
+#define MUIV_Analog_Notify_UpdateStatus 10
+#define MUIV_Analog_Notify_PortChange  11
 
-struct MUIP_LP1_Notify
+struct MUIP_Analog_Notify
 {
     IPTR id;
     IPTR direction;
@@ -37,7 +37,7 @@ struct MUIP_LP1_Notify
     IPTR data;
 };
 
-struct LP1Data
+struct AnalogData
 {
     struct ACEpansionPlugin *plugin;
     Object *TXT_LightStatus;
@@ -46,16 +46,16 @@ struct LP1Data
     Object *BTN_Port1;
 };
 
-static IPTR mNotify(struct IClass *cl, Object *obj, struct MUIP_LP1_Notify *msg)
+static IPTR mNotify(struct IClass *cl, Object *obj, struct MUIP_Analog_Notify *msg)
 {
-    struct LP1Data *data = INST_DATA(cl, obj);
+    struct AnalogData *data = INST_DATA(cl, obj);
 
     switch (msg->direction)
     {
-        case MUIV_LP1_Notify_ToGUI:
+        case MUIV_Analog_Notify_ToGUI:
             switch (msg->type)
             {
-                case MUIV_LP1_Notify_UpdateStatus:
+                case MUIV_Analog_Notify_UpdateStatus:
                 {
                     BOOL lightDetected = (BOOL)(msg->data & 0x01);
                     BOOL buttonPressed = (BOOL)((msg->data >> 1) & 0x01);
@@ -71,10 +71,10 @@ static IPTR mNotify(struct IClass *cl, Object *obj, struct MUIP_LP1_Notify *msg)
             }
             break;
 
-        case MUIV_LP1_Notify_ToPlugin:
+        case MUIV_Analog_Notify_ToPlugin:
             switch (msg->type)
             {
-                case MUIV_LP1_Notify_PortChange:
+                case MUIV_Analog_Notify_PortChange:
                     Plugin_SetJoystickPort(data->plugin, (UBYTE)msg->data);
                     break;
             }
@@ -87,7 +87,7 @@ static IPTR mNotify(struct IClass *cl, Object *obj, struct MUIP_LP1_Notify *msg)
 static IPTR mNew(struct IClass *cl, Object *obj, Msg msg)
 {
     struct TagItem *tags, *tag;
-    struct LP1Data *data;
+    struct AnalogData *data;
 
     struct ACEpansionPlugin *plugin = NULL;
 
@@ -95,7 +95,7 @@ static IPTR mNew(struct IClass *cl, Object *obj, Msg msg)
     {
         switch (tag->ti_Tag)
         {
-            case MUIA_LP1_Plugin:
+            case MUIA_Analog_Plugin:
                 plugin = (struct ACEpansionPlugin *)tag->ti_Data;
                 break;
         }
@@ -152,24 +152,24 @@ static IPTR mNew(struct IClass *cl, Object *obj, Msg msg)
     data->plugin = plugin;
 
     DoMethod(data->BTN_Port0, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-             obj, 3, MUIM_LP1_Notify,
-             MUIV_LP1_Notify_ToPlugin, MUIV_LP1_Notify_PortChange,
-             LP1_JOYSTICK_PORT_0);
+             obj, 3, MUIM_Analog_Notify,
+             MUIV_Analog_Notify_ToPlugin, MUIV_Analog_Notify_PortChange,
+             ANALOG_JOYSTICK_PORT_0);
 
     DoMethod(data->BTN_Port1, MUIM_Notify, MUIA_Selected, MUIV_EveryTime,
-             obj, 3, MUIM_LP1_Notify,
-             MUIV_LP1_Notify_ToPlugin, MUIV_LP1_Notify_PortChange,
-             LP1_JOYSTICK_PORT_1);
+             obj, 3, MUIM_Analog_Notify,
+             MUIV_Analog_Notify_ToPlugin, MUIV_Analog_Notify_PortChange,
+             ANALOG_JOYSTICK_PORT_1);
 
     return (IPTR)obj;
 }
 
-DISPATCHER(LP1Class)
+DISPATCHER(AnalogClass)
 {
     switch (msg->MethodID)
     {
         case OM_NEW:            return mNew(cl, obj, (APTR)msg);
-        case MUIM_LP1_Notify:   return mNotify(cl, obj, (APTR)msg);
+        case MUIM_Analog_Notify:   return mNotify(cl, obj, (APTR)msg);
     }
 }
 DISPATCHER_END
@@ -182,21 +182,21 @@ BOOL GUI_InitResources(VOID)
 
     if (UtilityBase && IntuitionBase && MUIMasterBase)
     {
-        MCC_LP1Class = MUI_CreateCustomClass(
+        MCC_AnalogClass = MUI_CreateCustomClass(
             NULL,
             MUIC_Group,
             NULL,
-            sizeof(struct LP1Data),
-            DISPATCHER_REF(LP1Class));
+            sizeof(struct AnalogData),
+            DISPATCHER_REF(AnalogClass));
     }
 
-    return MCC_LP1Class != NULL;
+    return MCC_AnalogClass != NULL;
 }
 
 VOID GUI_FreeResources(VOID)
 {
-    if (MCC_LP1Class)
-        MUI_DeleteCustomClass(MCC_LP1Class);
+    if (MCC_AnalogClass)
+        MUI_DeleteCustomClass(MCC_AnalogClass);
 
     CloseLibrary(MUIMasterBase);
     CloseLibrary(IntuitionBase);
@@ -205,8 +205,8 @@ VOID GUI_FreeResources(VOID)
 
 Object *GUI_Create(struct ACEpansionPlugin *plugin)
 {
-    return LP1Object,
-        MUIA_LP1_Plugin, plugin,
+    return AnalogObject,
+        MUIA_Analog_Plugin, plugin,
         End;
 }
 
@@ -220,9 +220,9 @@ VOID GUI_UpdateStatus(Object *gui, BOOL lightDetected, BOOL buttonPressed)
     if (gui)
     {
         IPTR data = ((IPTR)lightDetected) | (((IPTR)buttonPressed) << 1);
-        DoMethod(gui, MUIM_LP1_Notify,
-                 MUIV_LP1_Notify_ToGUI,
-                 MUIV_LP1_Notify_UpdateStatus,
+        DoMethod(gui, MUIM_Analog_Notify,
+                 MUIV_Analog_Notify_ToGUI,
+                 MUIV_Analog_Notify_UpdateStatus,
                  data);
     }
 }

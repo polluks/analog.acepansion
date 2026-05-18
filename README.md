@@ -1,12 +1,15 @@
-LP-1 ACEpansion - Amstrad LP-1 Light Pen plugin for ACE CPC Emulator
-=====================================================================
+Analog ACEpansion - GX4000/Plus Analog Joystick plugin for ACE CPC Emulator
+===========================================================================
 
 This is an ACEpansion (expansion plugin) for the ACE CPC emulator
-that emulates the Amstrad LP-1 Light Pen.
+that provides analog joystick support for GX4000/Plus via the
+built-in ADC hardware, based on the Tennis Cup 2 cartridge:
 
-The LP-1 connects to the CPC via the joystick port, using the DOWN
-direction signal as a light sensor input. This plugin bridges ACE's
-built-in light device tracking to the LP-1's joystick port protocol.
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)
+
+Tennis Cup 2 is the only known GX4000/Plus game to support an
+analog joystick, converting analog signals to digital directions
+via software. This plugin exposes the ADC hardware in emulation.
 
 Building
 --------
@@ -20,16 +23,15 @@ Build on MorphOS:
 
 Z80 Driver
 ----------
-The driver/ directory contains a Z80 assembly driver for reading the
-LP-1 light pen in your own CPC programs. It assembles with RASM:
+The driver/ directory contains a Z80 assembly driver for reading
+the analog joystick. It assembles with RASM:
 
-  https://github.com/EdouardBERGE/rasm
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)
 
   cd driver && make
 
 References
 ----------
-  https://www.cpcwiki.eu/index.php/Amstrad_LP-1_light_pen
-  https://www.cpcwiki.eu/index.php/Light_pen_driver
+  https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)
 
 Source code mirror: https://framagit.org/offset (search for "acepansion")

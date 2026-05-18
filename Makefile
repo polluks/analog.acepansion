@@ -1,6 +1,6 @@
-# Makefile for LP-1 ACEpansion
+# Makefile for Analog ACEpansion
 
-ACEPANSION = lp-1
+ACEPANSION = analog
 ACESDK     = /usr/include/
 SIMPLECAT  = SimpleCat
 CC         = gcc

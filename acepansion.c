@@ -76,7 +76,7 @@ struct ACEpansionPlugin *CreatePlugin(UNUSED CONST_STRPTR *toolTypes, UNUSED str
         myPlugin->common.ap_PrefsWindow    = GUI_Create((struct ACEpansionPlugin *)myPlugin);
 
         myPlugin->sema = sema;
-        myPlugin->joystickPort = LP1_JOYSTICK_PORT_1;
+        myPlugin->joystickPort = ANALOG_JOYSTICK_PORT_1;
         init(myPlugin);
     }
 
@@ -171,7 +171,7 @@ VOID Joystick(struct ACEpansionPlugin *plugin, BOOL com1, BOOL com2, UBYTE *ioDa
     if (!myPlugin->active)
         return;
 
-    BOOL ourPort = (myPlugin->joystickPort == LP1_JOYSTICK_PORT_0) ? com1 : com2;
+    BOOL ourPort = (myPlugin->joystickPort == ANALOG_JOYSTICK_PORT_0) ? com1 : com2;
 
     if (ourPort)
     {
@@ -248,7 +248,7 @@ VOID Plugin_SetJoystickPort(struct ACEpansionPlugin *plugin, UBYTE port)
     struct PluginData *myPlugin = (struct PluginData *)plugin;
 
     ObtainSemaphore(myPlugin->sema);
-    if (port == LP1_JOYSTICK_PORT_0 || port == LP1_JOYSTICK_PORT_1)
+    if (port == ANALOG_JOYSTICK_PORT_0 || port == ANALOG_JOYSTICK_PORT_1)
     {
         myPlugin->joystickPort = port;
     }
