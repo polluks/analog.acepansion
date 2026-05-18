@@ -1,0 +1,46 @@
+Plugin for ACE CPC Emulator which emulates the Amstrad LP-1 Light Pen.
+
+The LP-1 is the official Amstrad light pen, manufactured by Trojan
+and distributed by Amsoft. It connects to the joystick port and uses
+the DOWN direction signal as a light sensor input.
+
+This ACEpansion bridges ACE's built-in light device tracking to the
+joystick port protocol used by the LP-1:
+
+  - HostLightDeviceDiodePulse() triggers the joystick DOWN bit,
+    simulating the LP-1's photodiode detecting the CRT beam.
+  - HostLightDeviceButton() maps the pen button to joystick FIRE1.
+  - The Joystick() callback presents these signals on the selected
+    joystick port (default: port 1).
+
+Installation:
+-------------
+Copy the content of the archive to your ACE drawer.
+Use the ACE-LP1 icon to launch ACE with LP-1 support enabled.
+
+Settings:
+---------
+The plugin settings panel lets you select the joystick port:
+  - Joystick Port 0: LP-1 on joystick port A
+  - Joystick Port 1: LP-1 on joystick port B (default)
+
+Usage:
+------
+Once activated, the LP-1 Light Pen works with any CPC software that
+reads the joystick port for light pen input. The light pen position
+is controlled by the mouse cursor position (ACE maps the light device
+to the mouse when the plugin is active).
+
+The included Z80 driver (driver/lp1_driver.asm) provides assembly
+routines for reading the pen position and button state in your own
+programs.
+
+Files:
+------
+  Plugins/lp1.acepansion   - The ACEpansion plugin binary
+  Help/lp1.acepansion.guide - Documentation (English)
+  driver/lp1_driver.asm     - Z80 assembly driver source
+  driver/lp1_demo.bas       - BASIC demonstration program
+
+More information:
+  https://www.cpcwiki.eu/index.php/Amstrad_LP-1_light_pen
