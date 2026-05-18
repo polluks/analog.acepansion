@@ -14,36 +14,36 @@
 ; Works with the Analog ACEpansion plugin for ACE emulator.
 
 ; System equates
-PPI_PORTA:     equ &F400  ; PPI Port A - PSG data / keyboard
-PPI_PORTB:     equ &F500  ; PPI Port B - status lines
-PPI_PORTC:     equ &F600  ; PPI Port C - keyboard row select
-PPI_CONTROL:   equ &F700  ; PPI control port
+PPI_PORTA     equ $F400  ; PPI Port A - PSG data / keyboard
+PPI_PORTB     equ $F500  ; PPI Port B - status lines
+PPI_PORTC     equ $F600  ; PPI Port C - keyboard row select
+PPI_CONTROL   equ $F700  ; PPI control port
 
-AY_REG_SEL:    equ &F600  ; AY register select (via PPI)
-AY_REG_RD:     equ &F400  ; AY register read (via PPI)
-AY_CTL:        equ &F680  ; AY control lines
+AY_REG_SEL    equ $F600  ; AY register select (via PPI)
+AY_REG_RD     equ $F400  ; AY register read (via PPI)
+AY_CTL        equ $F680  ; AY control lines
 
 ; ADC ports (GX4000/Plus ASIC memory-mapped I/O)
-ADC_CH0:       equ 6808h  ; ADC channel 0 - X axis
-ADC_CH1:       equ 6809h  ; ADC channel 1 - Y axis
+ADC_CH0       equ $6808  ; ADC channel 0 - X axis
+ADC_CH1       equ $6809  ; ADC channel 1 - Y axis
 
 ; Joystick bit positions (digital format)
-JOY_UP:        equ 0      ; bit 0
-JOY_DOWN:      equ 1      ; bit 1
-JOY_LEFT:      equ 2      ; bit 2
-JOY_RIGHT:     equ 3      ; bit 3
-JOY_FIRE1:     equ 4      ; bit 4
+JOY_UP        equ 0      ; bit 0
+JOY_DOWN      equ 1      ; bit 1
+JOY_LEFT      equ 2      ; bit 2
+JOY_RIGHT     equ 3      ; bit 3
+JOY_FIRE1     equ 4      ; bit 4
 
 ; Keyboard row masks for AY PSG
-ROW_JOYSTICK_0: equ %10001110  ; Keyboard row 8, enable AY PSG
-ROW_JOYSTICK_1: equ %10001111  ; Keyboard row 9
+ROW_JOYSTICK_0 equ %10001110  ; Keyboard row 8, enable AY PSG
+ROW_JOYSTICK_1 equ %10001111  ; Keyboard row 9
 
 ; ADC center and threshold constants
-ADC_CENTER:    equ 1Fh    ; center value (31 for 0-63 range)
-ADC_THRESH:    equ 14h    ; dead zone threshold (+/-20 from center)
+ADC_CENTER    equ $1F    ; center value (31 for 0-63 range)
+ADC_THRESH    equ $14    ; dead zone threshold (+/-20 from center)
 
 ; Driver entry at &A000 (AMSDOS safe RAM area)
-                org &A000
+                org $A000
 
 ; ---- Jump table for fixed entry points ----
                 jp analog_init_main    ; &A000 (3 bytes)
@@ -83,7 +83,7 @@ analog_init_main:
                 ; Configure PPI: Port A = input, Port B = output,
                 ; Port C upper = output, Port C lower = output
                 ld bc, PPI_CONTROL
-                ld a, 82h
+                ld a, $82
                 out (c), a
 
                 ; Select AY register 14 (Port A data)
@@ -145,7 +145,7 @@ analog_read_main:
 
                 ; Enable upper ROM to access ADC area
                 ; (required on GX4000/Plus for ASIC I/O)
-                ld bc, 7FB8h
+                ld bc, $7FB8
                 out (c), c
 
                 ld c, 0           ; C = accumulator for joystick bits
@@ -262,7 +262,7 @@ analog_demo_track:
                 ; Display direction on screen
                 ; Mode 0 screen at &C000
                 ; Draw arrows based on direction bits
-                ld hl, &C000 + 40 * 100 + 78    ; center of screen
+                ld hl, $C000 + 40 * 100 + 78    ; center of screen
 
                 bit JOY_UP, a
                 jr z, .check_down
@@ -283,7 +283,7 @@ analog_demo_track:
                 bit JOY_FIRE1, a
                 jr z, .no_update
                 ; Flash border on fire
-                ld bc, &7F00
+                ld bc, $7F00
                 ld a, 2
                 out (c), a
 .no_update:

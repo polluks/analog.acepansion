@@ -3,7 +3,7 @@
 30 REM Based on Tennis Cup 2 analog joystick routine
 40 REM 
 50 MEMORY &9FFF
-60 LOAD"analog_driver.bin",&A000
+60 LOAD"DRIVER.BIN",&A000
 70 
 80 REM Initialize the driver
 90 CALL &A000

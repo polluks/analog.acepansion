@@ -1,4 +1,4 @@
-# Makefile for Analog Light Pen Z80 Driver
+# Makefile for Analog Joystick Z80 Driver
 # Requires RASM (Roudoudou's Z80 Assembler)
 # https://www.cpcwiki.eu/index.php/Tennis_Cup_2_(cartridge)
 
@@ -8,7 +8,7 @@ OUTPUT  = analog_driver.bin
 all: $(OUTPUT)
 
 $(OUTPUT): analog_driver.asm
-	$(RASM) $< -o $@ -b
+	$(RASM) $< -ob $@
 
 clean:
 	rm -f $(OUTPUT)
